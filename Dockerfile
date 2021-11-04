@@ -1,20 +1,14 @@
-FROM ubuntu:20.04
-ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && \
-  apt-get install -y gcc python-dev libkrb5-dev && \
-  apt-get install python3-pip -y && \
-  pip3 install --upgrade pip && \
-  pip3 install --upgrade virtualenv && \
-  pip3 install pywinrm[kerberos] && \
-  apt install krb5-user -y && \ 
-  pip3 install pywinrm && \
-  pip3 install ansible && \
-  apt-get install -y iputils-ping && \ 
-  apt install  openssh-server sudo -y && \ useradd -rm -d /home/ubuntu -s /bin/bash -g root -G sudo -u 1000 test 
+FROM ubuntu
+MAINTAINER Kimbro Staken
 
-RUN  echo 'test:test' | chpasswd && \
-service ssh start
+RUN apt-get install -y software-properties-common python
+RUN add-apt-repository ppa:chris-lea/node.js
+RUN echo "deb http://us.archive.ubuntu.com/ubuntu/ precise universe" >> /etc/apt/sources.list
+RUN apt-get update
+RUN apt-get install -y nodejs
+#RUN apt-get install -y nodejs=0.6.12~dfsg1-1ubuntu1
+RUN mkdir /var/www
 
-EXPOSE 22
+ADD app.js /var/www/app.js
 
-CMD ["/usr/sbin/sshd","-D"]
+CMD ["/usr/bin/node", "/var/www/app.js"] 
