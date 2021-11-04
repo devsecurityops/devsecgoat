@@ -1,16 +1,10 @@
-FROM node:slim
-MAINTAINER Riyaz Walikar <riyaz@appsecco.com>
-
-RUN mkdir -p /usr/src/app
-RUN npm install -g pm2
-
-COPY app.js /usr/src/app
-COPY package.json /usr/src/app
-
-WORKDIR /usr/src/app
-RUN npm install
-
-EXPOSE 8080
-CMD ["pm2","startup"]
-CMD ["pm2","stop","app"]
-CMD ["pm2","start","app.js","--name","app","--no-daemon"]
+FROM ubuntu:14.04
+MAINTAINER Docker Education Team <education@docker.com>
+RUN apt-get update
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y -q python-all python-pip 
+ADD ./webapp/requirements.txt /tmp/requirements.txt
+RUN pip install -qr /tmp/requirements.txt
+ADD ./webapp /opt/webapp/
+WORKDIR /opt/webapp
+EXPOSE 5000
+CMD ["python", "app.py"]
